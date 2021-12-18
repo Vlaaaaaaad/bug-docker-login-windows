@@ -1,0 +1,39 @@
+name: App / Build and push
+
+env:
+  # In GitHub, go to Settings -> Secrets and set:
+  #  AWS_ACCESS_KEY_ID to your own AWS Access Key ID, eg `AKIAIOSFODNN7EXAMPLE`
+  #  AWS_SECRET_ACCESS_KEY to your own AWS Secret Access Key, eg `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY`
+  AWS_ECR_PRIVATE_ACCOUNT_ID: "355938773567"
+  AWS_ECR_PRIVATE_REGION: "us-east-1"
+  AWS_ECR_PRIVATE_REPO_NAME: "bug-docker-login-windows"
+
+on:
+  push:
+
+jobs:
+  windows:
+    name: Amazon ECR Private - Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v2.4.0
+
+      - name: Login to Amazon ECR Private
+        continue-on-error: true
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ env.AWS_ECR_PRIVATE_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_ECR_PRIVATE_REGION }}.amazonaws.com
+          username: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1.6.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1.3.3
