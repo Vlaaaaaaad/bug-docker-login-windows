@@ -22,7 +22,7 @@ jobs:
 
       - name: Login to Amazon ECR Private
         continue-on-error: true
-        uses: docker/login-action@v1
+        uses: crazy-max/docker-login-action@aws-sdk
         with:
           registry: ${{ env.AWS_ECR_PRIVATE_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_ECR_PRIVATE_REGION }}.amazonaws.com
           username: ${{ secrets.AWS_ACCESS_KEY_ID }}
